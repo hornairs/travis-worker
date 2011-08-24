@@ -50,7 +50,7 @@ class WorkerConfigTest < Test::Unit::TestCase
   end
 
   test 'bundle timeout defaults to 300' do
-    assert_equal 300, config.timeouts.bundle
+    assert_equal 300, config.timeouts.install_deps
   end
 
   test 'queue defaults to builds' do
@@ -70,6 +70,7 @@ class WorkerConfigTest < Test::Unit::TestCase
   end
 
   test 'vms includes the Vms module' do
+    File.stubs(:exists?).returns(true)
     Config.any_instance.stubs(:read_yml).returns({ 'vms' => { 'count' => 5 } })
     config = Config.new
     assert config.vms.meta_class.included_modules.include?(Config::Vms)
