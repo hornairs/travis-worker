@@ -80,14 +80,18 @@ module Travis
 
         protected
 
+        def vbox_vm
+          vm.vm
+        end # vbox_vm
+
         def vm_name
-          vm.vm.name
+          vbox_vm.name
         end
 
         def start_shell
-          puts "starting ssh session to #{config.host}:#{vm.ssh.port} ..."
+          puts "[ssh] Starting a new SSH session to #{config.host}:#{vm.ssh.port} ..."
           Net::SSH.start(config.host, config.username, :port => vm.ssh.port, :keys => [config.private_key_path]).shell.tap do
-            puts 'done.'
+            puts '[ssh] done.'
           end
         end
 
@@ -109,6 +113,7 @@ module Travis
         end
 
         def start_sandbox
+          prepare_vm
           take_vm_snapshot
         end
 
@@ -120,13 +125,20 @@ module Travis
           puts "#{$!.class.name}: #{$!.message}", $@
         end
 
-        def vbox_vm
-          vm.vm
-        end # vbox_vm
+
+        def prepare_vm
+          puts "[vbox] #{vm_name} state is #{vbox_vm.state}"
+          if vbox_vm.paused?
+            puts "[vbox] Discarding the state of #{vm_name}"
+            vbox_vm.discard_state
+          end
+
+          puts "[vbox] Done preparing #{vm_name}"
+        end # prepare_vm
 
         def take_vm_snapshot
           puts "[vbox] Taking a snapshot of #{vm_name}"
-          puts "[vbox] #{vm_name} state is #{vbox_vm.state}"
+
           begin
             # vbox_vm.take_snapshot("#{vm_name}-sandbox")
 
