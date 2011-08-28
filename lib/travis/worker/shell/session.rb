@@ -118,7 +118,7 @@ module Travis
         end
 
         def rollback_sandbox
-          vbox_power_off
+          power_off_vm
           vbox_delete_snapshots
           vbox_start_vm
         rescue
@@ -141,7 +141,6 @@ module Travis
 
           begin
             # vbox_vm.take_snapshot("#{vm_name}-sandbox")
-
             vbox_manage "snapshot '#{vm_name}' take '#{vm_name}-sandbox'", :wait => "showvminfo '#{vm_name}' | grep #{vm_name}-sandbox"
             puts "[vbox] Taken."
           rescue Exception => e
@@ -149,10 +148,16 @@ module Travis
           end
         end
 
-        def vbox_power_off
-          puts "[vbox] Powering off #{vm_name} ..."
-          vbox_manage "controlvm '#{vm_name}' poweroff", :wait => "showvminfo '#{vm_name}' | grep State | grep 'powered off'"
-          puts "[vbox] Powered off."
+        def power_off_vm
+          begin
+            puts "[vbox] Powering off #{vm_name} ..."
+            # vbox_vm.control('poweroff')
+            vbox_manage "controlvm '#{vm_name}' poweroff", :wait => "showvminfo '#{vm_name}' | grep State | grep 'powered off'"
+            puts "[vbox] Powered off."
+          rescue Exception => e
+            puts "[vbox] Failed to power off #{vm_name}: #{e.exception}"
+          end
+
         end
 
         def vbox_restore_snapshot
