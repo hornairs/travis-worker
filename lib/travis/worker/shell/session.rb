@@ -120,10 +120,21 @@ module Travis
           puts "#{$!.class.name}: #{$!.message}", $@
         end
 
+        def vbox_vm
+          vm.vm
+        end # vbox_vm
+
         def vbox_take_snapshot
-          puts "[vbox] Taking snapshot on #{vm_name}"
-          vbox_manage "snapshot '#{vm_name}' take '#{vm_name}-sandbox'", :wait => "showvminfo '#{vm_name}' | grep #{vm_name}-sandbox"
-          puts "[vbox] Taken."
+          puts "[vbox] Taking a snapshot of #{vm_name}"
+          puts "[vbox] #{vm_name} state is #{vbox_vm.state}"
+          begin
+            # vbox_vm.take_snapshot("#{vm_name}-sandbox")
+
+            vbox_manage "snapshot '#{vm_name}' take '#{vm_name}-sandbox'", :wait => "showvminfo '#{vm_name}' | grep #{vm_name}-sandbox"
+            puts "[vbox] Taken."
+          rescue Exception => e
+            puts "[vbox] Failed to take a snapshot: #{e.exception}"
+          end
         end
 
         def vbox_power_off
