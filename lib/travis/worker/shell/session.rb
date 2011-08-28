@@ -119,8 +119,8 @@ module Travis
 
         def rollback_sandbox
           power_off_vm
-          vbox_delete_snapshots
-          vbox_start_vm
+          delete_vm_snapshots
+          start_vm
         rescue
           puts "#{$!.class.name}: #{$!.message}", $@
         end
@@ -166,8 +166,8 @@ module Travis
           puts "[vbox] Restored."
         end
 
-        def vbox_delete_snapshots
-          vbox_snapshots.reverse.each do |snapshot|
+        def delete_vm_snapshots
+          vm_snapshots.reverse.each do |snapshot|
             vbox_restore_snapshot
             puts "[vbox] Deleting snapshot #{snapshot} ..."
             vbox_manage "snapshot '#{vm_name}' delete '#{snapshot}'"
@@ -175,7 +175,7 @@ module Travis
           end
         end
 
-        def vbox_start_vm
+        def start_vm
           puts "[vbox] Starting #{vm_name} ..."
           vbox_manage "startvm --type headless '#{vm_name}'", :wait => "showvminfo '#{vm_name}' | grep State | grep 'running'"
           puts "[vbox] Started."
@@ -198,7 +198,7 @@ module Travis
           sleep(0.5) until vbox_eval(cmd)
         end
 
-        def vbox_snapshots
+        def vm_snapshots
           info = `vboxmanage showvminfo #{vm_name} --details`
           if info =~ /^Snapshots\s*/
             info.split(/^Snapshots\s*/).last.split("\n").map { |line| line =~ /\(UUID: ([^\)]*)\)/ and $1 }.compact
