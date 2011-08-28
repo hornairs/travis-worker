@@ -74,25 +74,25 @@ module Travis
           end
 
           def add_box(name, options = {})
-            run "vagrant box add #{options[:to] || name} #{name}.box"
+            run "bundle exec vagrant box add #{options[:to] || name} #{name}.box"
           end
 
           def remove_box(name)
-            run "vagrant box remove #{name}"
+            run "bundle exec vagrant box remove #{name}"
           end
 
           def up(name = nil, options = { :provision => false })
             ENV['WITH_BASE'] = (name == 'base').inspect
-            run "vagrant up #{name} --provision=#{options[:provision].inspect}"
+            run "bundle exec vagrant up #{name} --provision=#{options[:provision].inspect}"
           end
 
           def destroy(name)
-            run "vagrant destroy #{name}"
+            run "bundle exec vagrant destroy #{name}"
           end
 
           def package_box(name)
             run "rm -rf #{name}.box"
-            run "vagrant package --base #{uuid}"
+            run "bundle exec vagrant package --base #{uuid}"
             run "mv package.box #{name}.box"
           end
 
