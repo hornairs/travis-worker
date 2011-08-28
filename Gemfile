@@ -7,13 +7,11 @@ platforms :mri_18 do
   gem 'SystemTimer'
 end
 
-gem 'vagrant',       "0.7.7"
-# gem 'vagrant',      :git => 'git://github.com/mitchellh/vagrant.git'
-# gem 'vagrant',       "~>  0.8.2"
+gem 'vagrant',       "~> 0.7.8"
 
 gem 'net-ssh'
-gem 'net-ssh-shell', '~> 0.2.0'
-gem 'hashr',         '~> 0.0.9'
+gem 'net-ssh-shell'
+gem 'hashr',         '~> 0.0.13'
 gem "multi_json"
 
 # amqp migration is a work in progress but it does not affect resque-based worker in any way
@@ -40,7 +38,7 @@ end
 
 group :debug do
   gem 'ruby-debug',   :platforms => :mri_18
-  gem 'ruby-debug19', :platforms => :mri_19
+  gem 'ruby-debug19', :platforms => :mri_19 unless RUBY_VERSION >= "1.9.3"
 end
 
 group :test do
