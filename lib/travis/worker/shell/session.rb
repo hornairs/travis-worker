@@ -109,7 +109,7 @@ module Travis
         end
 
         def start_sandbox
-          vbox_take_snapshot
+          take_vm_snapshot
         end
 
         def rollback_sandbox
@@ -124,7 +124,7 @@ module Travis
           vm.vm
         end # vbox_vm
 
-        def vbox_take_snapshot
+        def take_vm_snapshot
           puts "[vbox] Taking a snapshot of #{vm_name}"
           puts "[vbox] #{vm_name} state is #{vbox_vm.state}"
           begin
